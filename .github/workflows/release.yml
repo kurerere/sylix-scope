@@ -1,0 +1,198 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  # 手动触发：只构建并上传 Actions 产物，不创建 Release
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  prepare:
+    name: Version & tests
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$(node -p "require('./src-tauri/tauri.conf.json').version")"
+          fi
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid version '$version', expected a tag like v1.2.3 or v1.2.3-beta.1"
+            exit 1
+          fi
+          prerelease=false
+          [[ "$version" == *-* ]] && prerelease=true
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+          echo "version=$version prerelease=$prerelease"
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm test
+
+  build:
+    name: Build ${{ matrix.platform }}
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-amd64
+            os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - platform: macos-arm64
+            os: macos-latest
+            target: aarch64-apple-darwin
+          - platform: windows-amd64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - platform: windows-arm64
+            os: windows-11-arm
+            target: aarch64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+      # linuxdeploy 打包 AppImage 时不依赖 FUSE
+      APPIMAGE_EXTRACT_AND_RUN: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ${{ matrix.target }}
+
+      - name: Set app version
+        shell: bash
+        run: |
+          node -e "const fs=require('fs');const f='src-tauri/tauri.conf.json';const c=JSON.parse(fs.readFileSync(f,'utf8'));c.version=process.env.VERSION;fs.writeFileSync(f,JSON.stringify(c,null,4)+'\n')"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build
+        shell: bash
+        run: |
+          args=(--target "${{ matrix.target }}")
+          # WiX (MSI) 不支持 ARM64，也不支持非数字的预发布版本号，这两种情况只出 NSIS 安装包
+          if [[ "${{ matrix.platform }}" == windows-* ]] && { [[ "${{ matrix.platform }}" == windows-arm64 ]] || [[ "$PRERELEASE" == true ]]; }; then
+            args+=(--bundles nsis)
+          fi
+          pnpm tauri build "${args[@]}"
+
+      - name: Collect packages
+        shell: bash
+        run: |
+          shopt -s nullglob
+          out=release
+          mkdir -p "$out"
+          release_dir="src-tauri/target/${{ matrix.target }}/release"
+          bundle="$release_dir/bundle"
+          name="sylixscope_${VERSION}_${{ matrix.platform }}"
+
+          # 复制第一个匹配的文件，没有匹配时跳过
+          copy() { local files=($1); [ ${#files[@]} -gt 0 ] && cp "${files[0]}" "$out/$2"; return 0; }
+
+          case "${{ matrix.platform }}" in
+            linux-*)
+              copy "$bundle/deb/*.deb" "$name.deb"
+              copy "$bundle/rpm/*.rpm" "$name.rpm"
+              copy "$bundle/appimage/*.AppImage" "$name.AppImage"
+              ;;
+            macos-*)
+              copy "$bundle/dmg/*.dmg" "$name.dmg"
+              tar -czf "$out/$name.app.tar.gz" -C "$bundle/macos" SylixScope.app
+              ;;
+            windows-*)
+              copy "$bundle/nsis/*-setup.exe" "$name-setup.exe"
+              copy "$bundle/msi/*.msi" "$name.msi"
+              cp "$release_dir/sylix-scope.exe" "$out/$name-portable.exe"
+              ;;
+          esac
+          ls -l "$out"
+          [ -n "$(ls -A "$out")" ] || { echo "::error::No packages produced"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sylixscope_${{ env.VERSION }}_${{ matrix.platform }}
+          path: release/*
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    needs: [prepare, build]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release
+          merge-multiple: true
+
+      - name: Checksums
+        working-directory: release
+        run: sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+
+      - name: Create or update release
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            # 重新运行时覆盖已上传的文件
+            gh release upload "$tag" release/* --clobber
+            exit 0
+          fi
+          cat > notes.md <<'EOF'
+          ## 下载
+
+          | 平台 | 文件 |
+          |---|---|
+          | Linux x64 | `*_linux-amd64.deb`（Debian/Ubuntu）、`*_linux-amd64.rpm`（Fedora/openSUSE）、`*_linux-amd64.AppImage`（通用） |
+          | macOS（Apple 芯片） | `*_macos-arm64.dmg` |
+          | Windows x64 | `*_windows-amd64-setup.exe`（推荐）、`*_windows-amd64.msi`、`*_windows-amd64-portable.exe`（免安装） |
+          | Windows ARM64 | `*_windows-arm64-setup.exe`（推荐）、`*_windows-arm64-portable.exe`（免安装） |
+
+          macOS 版本未签名，首次打开前请执行：`xattr -cr /Applications/SylixScope.app`
+          EOF
+          flags=()
+          [ "${{ needs.prepare.outputs.prerelease }}" = "true" ] && flags+=(--prerelease)
+          gh release create "$tag" release/* --title "SylixScope $tag" --notes-file notes.md --generate-notes "${flags[@]}"

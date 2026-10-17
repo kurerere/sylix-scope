@@ -1,0 +1,7 @@
+packages:
+    - .
+
+allowBuilds:
+    esbuild: true
+minimumReleaseAgeExclude:
+    - postcss@8.5.18

@@ -1,0 +1,33 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["typescript", "unicorn", "react", "import", "oxc", "promise"],
+    "categories": {
+        "correctness": "error",
+        "perf": "error",
+        "suspicious": "error",
+        "nursery": "warn",
+        "style": "off"
+    },
+    "rules": {
+        "no-debugger": "error",
+        "no-console": [
+            "warn",
+            {
+                "allow": ["warn", "error"]
+            }
+        ],
+        "import/no-unassigned-import": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "react/react-in-jsx-scope": "off",
+        "react-perf/jsx-no-new-object-as-prop": "off",
+        "react-perf/jsx-no-new-function-as-prop": "off",
+        "react-perf/jsx-no-jsx-as-prop": "off",
+        "react-perf/jsx-no-new-array-as-prop": "off",
+        "unicorn/no-array-sort": "off"
+    },
+    "env": {
+        "builtin": true,
+        "browser": true
+    }
+}

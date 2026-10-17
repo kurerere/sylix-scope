@@ -1,0 +1,300 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    /* 字体系统：Geist（拉丁/数字）+ Noto Sans SC（汉字）+ Geist Mono（数据/代码），
+       全部自打包，任何平台不依赖系统字体 */
+    --font-sans:
+        'Geist Variable', 'Noto Sans SC Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, sans-serif;
+    --font-mono:
+        'Geist Mono Variable', 'Noto Sans SC Variable', ui-monospace, SFMono-Regular, Consolas,
+        'Liberation Mono', monospace;
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-sig-ok: var(--sig-ok);
+    --color-sig-warn: var(--sig-warn);
+    --color-sig-bad: var(--sig-bad);
+
+    --color-chart-cpu: var(--chart-cpu);
+    --color-chart-mem: var(--chart-mem);
+    --color-seg-kernel: var(--seg-kernel);
+    --color-seg-app: var(--seg-app);
+    --color-seg-other: var(--seg-other);
+    --color-seg-free: var(--seg-free);
+
+    --radius: 2px;
+    --radius-xs: var(--radius);
+    --radius-sm: var(--radius);
+    --radius-md: var(--radius);
+    --radius-lg: var(--radius);
+    --radius-xl: var(--radius);
+    --radius-2xl: var(--radius);
+    --radius-3xl: var(--radius);
+    --radius-4xl: var(--radius);
+}
+
+:root {
+    --background: #f6f8fa;
+    --foreground: #1f2328;
+
+    --card: #ffffff;
+    --card-foreground: #1f2328;
+
+    --popover: #ffffff;
+    --popover-foreground: #1f2328;
+
+    --primary: #0969da;
+    --primary-foreground: #ffffff;
+
+    --secondary: #f6f8fa;
+    --secondary-foreground: #1f2328;
+
+    --muted: #f6f8fa;
+    --muted-foreground: #57606a;
+
+    --accent: #eaeef2;
+    --accent-foreground: #1f2328;
+
+    --destructive: #cf222e;
+    --destructive-foreground: #ffffff;
+
+    --border: #d0d7de;
+    --input: #d0d7de;
+    --ring: rgba(9, 105, 218, 0.35);
+
+    --radius: 2px;
+
+    --sig-ok: #1a7f37;
+    --sig-warn: #9a6700;
+    --sig-bad: #cf222e;
+
+    --chart-cpu: #0969da;
+    --chart-mem: #1b7c83;
+    --seg-kernel: #9a6700;
+    --seg-app: #0969da;
+    --seg-other: #1b7c83;
+    --seg-free: #57606a;
+
+    --scrollbar-thumb: rgba(15, 23, 42, 0.15);
+    --scrollbar-thumb-hover: rgba(15, 23, 42, 0.28);
+}
+
+.dark {
+    --background: #0d1117;
+    --foreground: #e6edf3;
+
+    --card: #161b22;
+    --card-foreground: #e6edf3;
+
+    --popover: #161b22;
+    --popover-foreground: #e6edf3;
+
+    --primary: #2f81f7;
+    --primary-foreground: #ffffff;
+
+    --secondary: #21262d;
+    --secondary-foreground: #e6edf3;
+
+    --muted: #21262d;
+    --muted-foreground: #8d96a0;
+
+    --accent: #30363d;
+    --accent-foreground: #f0f6fc;
+
+    --destructive: #f85149;
+    --destructive-foreground: #ffffff;
+
+    --border: #30363d;
+    --input: #30363d;
+    --ring: rgba(47, 129, 247, 0.45);
+
+    --sig-ok: #3fb950;
+    --sig-warn: #d29922;
+    --sig-bad: #f85149;
+
+    --chart-cpu: #58a6ff;
+    --chart-mem: #56d4dd;
+    --seg-kernel: #d29922;
+    --seg-app: #58a6ff;
+    --seg-other: #56d4dd;
+    --seg-free: #6e7681;
+
+    --scrollbar-thumb: rgba(255, 255, 255, 0.14);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.26);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/30;
+    }
+    button,
+    [role='button'],
+    select,
+    input[type='submit'],
+    input[type='reset'],
+    input[type='button'] {
+        cursor: pointer;
+    }
+    body {
+        @apply text-foreground selection:bg-primary/30 selection:text-primary font-sans antialiased;
+        background-color: transparent !important;
+        /* 监控界面数字每秒刷新：全局等宽数字避免数值跳动引起的横向抖动 */
+        font-variant-numeric: tabular-nums;
+    }
+    html {
+        @apply font-sans;
+        background-color: transparent !important;
+    }
+}
+
+/* 阈值越限的边界呼吸提示（功能语义：状态需要被余光捕捉） */
+@keyframes glow-pulse-rose {
+    0%,
+    100% {
+        border-color: color-mix(in srgb, var(--sig-bad) 25%, transparent);
+        box-shadow: 0 0 10px color-mix(in srgb, var(--sig-bad) 8%, transparent);
+    }
+    50% {
+        border-color: color-mix(in srgb, var(--sig-bad) 55%, transparent);
+        box-shadow: 0 0 16px color-mix(in srgb, var(--sig-bad) 22%, transparent);
+    }
+}
+.alert-glow-rose {
+    animation: glow-pulse-rose 2s infinite ease-in-out;
+}
+
+@keyframes glow-pulse-amber {
+    0%,
+    100% {
+        border-color: color-mix(in srgb, var(--sig-warn) 25%, transparent);
+        box-shadow: 0 0 10px color-mix(in srgb, var(--sig-warn) 8%, transparent);
+    }
+    50% {
+        border-color: color-mix(in srgb, var(--sig-warn) 55%, transparent);
+        box-shadow: 0 0 16px color-mix(in srgb, var(--sig-warn) 20%, transparent);
+    }
+}
+.alert-glow-amber {
+    animation: glow-pulse-amber 2s infinite ease-in-out;
+}
+
+/* 录制进行中的红点涟漪与悬浮窗呼吸（功能语义：避免无感知持续采集） */
+@keyframes ripple-rose {
+    0% {
+        transform: scale(0.85);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        transform: scale(2.2);
+        opacity: 0;
+    }
+}
+.animate-ripple-rose-1 {
+    animation: ripple-rose 2.4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+.animate-ripple-rose-2 {
+    animation: ripple-rose 2.4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    animation-delay: 0.8s;
+}
+.animate-ripple-rose-3 {
+    animation: ripple-rose 2.4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    animation-delay: 1.6s;
+}
+
+@keyframes recording-border-pulse {
+    0%,
+    100% {
+        border-color: color-mix(in srgb, var(--sig-bad) 25%, transparent);
+    }
+    50% {
+        border-color: color-mix(in srgb, var(--sig-bad) 55%, transparent);
+    }
+}
+.recording-active {
+    animation: recording-border-pulse 2s infinite ease-in-out;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* recharts 交互层禁用文本选择，保留原生焦点轮廓 */
+.recharts-surface,
+.recharts-wrapper {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-delay: -1ms !important;
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        background-attachment: initial !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+    }
+
+    .alert-glow-rose,
+    .alert-glow-amber,
+    .recording-active {
+        animation: none !important;
+    }
+
+    .animate-ripple-rose-1,
+    .animate-ripple-rose-2,
+    .animate-ripple-rose-3 {
+        animation: none !important;
+        display: none !important;
+    }
+}

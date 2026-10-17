@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2533"/>
+      <stop offset="1" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="trace" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f81f7"/>
+      <stop offset="0.55" stop-color="#58a6ff"/>
+      <stop offset="1" stop-color="#a5d6ff"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <clipPath id="screen">
+      <rect x="132" y="132" width="760" height="760" rx="120"/>
+    </clipPath>
+  </defs>
+
+  <!-- 外壳 -->
+  <rect x="48" y="48" width="928" height="928" rx="208" fill="url(#bg)"/>
+  <rect x="48" y="48" width="928" height="928" rx="208" fill="none" stroke="#30363d" stroke-width="8"/>
+
+  <!-- 屏幕与刻度网格 -->
+  <rect x="132" y="132" width="760" height="760" rx="120" fill="#0a0f16"/>
+  <g clip-path="url(#screen)" stroke="#2f81f7" stroke-opacity="0.16" stroke-width="6">
+    <path d="M322 132V892M512 132V892M702 132V892M132 322H892M132 702H892"/>
+    <path d="M132 512H892" stroke-opacity="0.32"/>
+  </g>
+
+  <!-- 波形：平稳 → 尖峰 → 回落 → 平稳 -->
+  <g clip-path="url(#screen)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M132 560 H372 L432 512 L492 232 L572 792 L632 512 L692 560 H892"
+          stroke="#2f81f7" stroke-width="72" stroke-opacity="0.55" filter="url(#glow)"/>
+    <path d="M132 560 H372 L432 512 L492 232 L572 792 L632 512 L692 560 H892"
+          stroke="url(#trace)" stroke-width="52"/>
+  </g>
+</svg>
