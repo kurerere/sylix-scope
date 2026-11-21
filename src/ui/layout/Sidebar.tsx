@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import { ActionTooltip } from '@/components/ui/tooltip'
 import { tauriBridge, AppInfo } from '@/infrastructure/tauri/bridge'
 
-const isMac = typeof window !== 'undefined' && navigator.userAgent.includes('Mac')
-
 export function Sidebar({
     activeTab,
     setActiveTab,
@@ -46,89 +44,101 @@ export function Sidebar({
         { id: 'monitor' as const, label: '实时监控', icon: TrendingUp },
         { id: 'network' as const, label: '网络看板', icon: Network },
         { id: 'history' as const, label: '历史记录', icon: Clock },
-        { id: 'settings' as const, label: '设置', icon: Sliders },
     ]
+
+    const settingsItem = { id: 'settings' as const, label: '设置', icon: Sliders }
+
+    const renderNavButton = (item: { id: typeof activeTab; label: string; icon: typeof TrendingUp }) => {
+        const Icon = item.icon
+        const isActive = activeTab === item.id
+        return (
+            <ActionTooltip
+                key={item.id}
+                content={item.label}
+                side="right"
+                sideOffset={12}
+                disabled={!isCollapsed}>
+                <button
+                    onClick={() => setActiveTab(item.id)}
+                    aria-label={item.label}
+                    className={`flex w-full cursor-pointer items-center rounded-lg transition-colors duration-150 ${
+                        isCollapsed ? 'justify-center' : 'gap-2.5 px-2.5 py-1.5'
+                    } ${
+                        isActive
+                            ? 'bg-tint-surface-active text-ink'
+                            : 'text-text-secondary hover:bg-tint-surface-hover hover:text-ink'
+                    }`}>
+                    <span
+                        className={`flex items-center justify-center rounded-md transition-colors duration-150 ${
+                            isCollapsed ? 'size-7' : 'size-6'
+                        } ${isActive && isCollapsed ? 'bg-ink text-page' : ''}`}>
+                        <Icon className={isCollapsed ? 'size-4' : 'size-3.5'} />
+                    </span>
+                    {!isCollapsed && (
+                        <span className="text-xs font-medium whitespace-nowrap">{item.label}</span>
+                    )}
+                </button>
+            </ActionTooltip>
+        )
+    }
 
     return (
         <aside
-            className={`bg-card border-border relative z-20 flex flex-col justify-between border-r transition-all duration-300 ease-in-out select-none ${
-                isCollapsed ? 'w-16' : 'w-64'
+            className={`relative z-20 flex shrink-0 flex-col justify-between transition-all duration-300 ease-in-out select-none ${
+                isCollapsed ? 'w-10' : 'w-56'
             }`}>
             <div>
                 <div
-                    className={`border-border flex items-center border-b pb-6 transition-all duration-300 ${
-                        isCollapsed ? 'justify-center px-0' : 'space-x-3 px-6'
-                    } ${isMac ? 'pt-12' : 'pt-6'}`}
-                    data-tauri-drag-region>
-                    <img src="/icon.svg" alt="" draggable={false} className="size-10 shrink-0" />
+                    className={`flex items-center transition-all duration-300 ${
+                        isCollapsed ? 'justify-center py-2' : 'gap-2.5 px-3 py-2.5'
+                    }`}>
+                    <img
+                        src="/icon.svg"
+                        alt=""
+                        draggable={false}
+                        className={isCollapsed ? 'size-6 shrink-0' : 'size-5 shrink-0'}
+                    />
                     {!isCollapsed && (
-                        <h1 className="text-foreground min-w-0 text-sm font-bold whitespace-nowrap">
+                        <h1 className="text-ink min-w-0 text-[13px] font-semibold whitespace-nowrap">
                             SylixScope
                         </h1>
                     )}
                 </div>
 
                 <nav
-                    className={`mt-8 space-y-1.5 transition-all duration-300 ${isCollapsed ? 'px-2' : 'px-4'}`}>
-                    {navItems.map((item) => {
-                        const Icon = item.icon
-                        const isActive = activeTab === item.id
-                        return (
-                            <div key={item.id} className="relative">
-                                <ActionTooltip
-                                    content={item.label}
-                                    side="right"
-                                    sideOffset={12}
-                                    disabled={!isCollapsed}>
-                                    <button
-                                        onClick={() => setActiveTab(item.id)}
-                                        aria-label={item.label}
-                                        className={`flex w-full cursor-pointer items-center rounded-sm border py-3 transition-colors duration-200 ${
-                                            isCollapsed ? 'justify-center px-0' : 'space-x-3 px-4'
-                                        } ${
-                                            isActive
-                                                ? 'border-border bg-secondary text-foreground border'
-                                                : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
-                                        }`}>
-                                        <Icon className={isCollapsed ? 'size-5' : 'size-4'} />
-                                        {!isCollapsed && (
-                                            <span className="text-xs font-semibold tracking-widest whitespace-nowrap uppercase">
-                                                {item.label}
-                                            </span>
-                                        )}
-                                    </button>
-                                </ActionTooltip>
-                            </div>
-                        )
-                    })}
+                    className={`mt-2 space-y-0.5 transition-all duration-300 ${
+                        isCollapsed ? 'flex flex-col items-center gap-1 px-1' : 'px-1.5'
+                    }`}>
+                    {navItems.map(renderNavButton)}
                 </nav>
             </div>
 
-            <div
-                className={`border-border border-t py-4 transition-all duration-300 ${
-                    isCollapsed ? 'flex justify-center px-0' : 'px-6'
-                }`}>
-                {isCollapsed ? (
-                    <ActionTooltip
-                        content={`版本: v${appInfo?.app_version || '1.0.0'} (构建: ${appInfo?.build_date || '未知'})`}
-                        side="right"
-                        sideOffset={12}>
-                        <div className="flex items-center justify-center">
-                            <span className="text-muted-foreground font-mono text-[0.625rem] font-bold">
+            <div className={isCollapsed ? 'flex flex-col items-center gap-1 px-1 pb-1.5' : 'px-1.5 pb-1.5'}>
+                {renderNavButton(settingsItem)}
+                <div
+                    className={`flex items-center whitespace-nowrap ${
+                        isCollapsed ? 'justify-center pt-1' : 'justify-between px-2.5 pt-2'
+                    }`}>
+                    {isCollapsed ? (
+                        <ActionTooltip
+                            content={`版本: v${appInfo?.app_version || '1.0.0'} (构建: ${appInfo?.build_date || '未知'})`}
+                            side="right"
+                            sideOffset={12}>
+                            <span className="text-text-quaternary font-mono text-[0.625rem]">
                                 v{appInfo?.app_version || '1.0.0'}
                             </span>
-                        </div>
-                    </ActionTooltip>
-                ) : (
-                    <div className="text-muted-foreground flex items-center justify-between whitespace-nowrap">
-                        <span className="font-mono text-[0.6875rem] font-bold">
-                            v{appInfo?.app_version || '1.0.0'}
-                        </span>
-                        <span className="font-mono text-[0.625rem] opacity-80">
-                            Tauri v{appInfo?.tauri_version || '2.0'}
-                        </span>
-                    </div>
-                )}
+                        </ActionTooltip>
+                    ) : (
+                        <>
+                            <span className="text-text-quaternary font-mono text-[0.6875rem]">
+                                v{appInfo?.app_version || '1.0.0'}
+                            </span>
+                            <span className="text-text-quaternary font-mono text-[0.625rem]">
+                                Tauri v{appInfo?.tauri_version || '2.0'}
+                            </span>
+                        </>
+                    )}
+                </div>
             </div>
 
             <ActionTooltip
@@ -142,11 +152,11 @@ export function Sidebar({
                         localStorage.setItem('sylixos_sidebar_collapsed', String(nextCollapsed))
                     }}
                     aria-label={isCollapsed ? '展开侧边栏' : '收起侧边栏'}
-                    className="border-border bg-card text-muted-foreground hover:text-foreground absolute top-1/2 -right-3 z-30 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-sm border transition-colors duration-200">
+                    className="border-border bg-elevated text-text-tertiary hover:text-ink absolute top-1/2 -right-2.5 z-30 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-l1 transition-colors duration-150">
                     {isCollapsed ? (
-                        <ChevronRight className="size-3.5 transition-transform duration-200" />
+                        <ChevronRight className="size-3 transition-transform duration-200" />
                     ) : (
-                        <ChevronLeft className="size-3.5 transition-transform duration-200" />
+                        <ChevronLeft className="size-3 transition-transform duration-200" />
                     )}
                 </button>
             </ActionTooltip>

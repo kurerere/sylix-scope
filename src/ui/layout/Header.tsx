@@ -1,4 +1,4 @@
-import { Server, Play, Sliders, Square, Loader2, Bot, X } from 'lucide-react'
+import { Play, Sliders, Square, Loader2, Bot, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { useMcpServer } from '@/application/useMcpServer'
@@ -43,50 +43,49 @@ export function Header({
         ? `MCP 服务在线 (端口 ${mcpStatus.port})`
         : 'MCP 服务已停止'
 
+    const viewTitle =
+        activeTab === 'monitor'
+            ? '实时监控'
+            : activeTab === 'network'
+              ? '网络看板'
+              : activeTab === 'settings'
+                ? '设置'
+                : '历史记录'
+
     return (
         <header
-            className={`border-border bg-card flex shrink-0 items-center justify-between border-b px-8 ${isMac ? 'h-20 pt-4' : 'h-16'}`}
+            className={`flex shrink-0 items-center justify-between px-3 ${isMac ? 'h-14 pt-4' : 'h-10'}`}
             data-tauri-drag-region>
-            <div className="flex items-center gap-3">
-                <Server className="text-muted-foreground size-4" />
-                <span className="text-foreground text-xs font-bold tracking-widest uppercase">
-                    {activeTab === 'monitor'
-                        ? '实时监控'
-                        : activeTab === 'network'
-                          ? '网络看板'
-                          : activeTab === 'settings'
-                            ? '设置'
-                            : '历史记录'}
-                </span>
+            <div className="flex items-center gap-2">
+                <img src="/icon.svg" alt="" draggable={false} className="size-4 shrink-0" />
+                <span className="text-ink text-[13px] font-semibold">SylixScope</span>
+                <span className="text-text-quaternary">/</span>
+                <span className="text-text-tertiary text-xs">{viewTitle}</span>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
                 <ActionTooltip content={mcpTooltipText} side="bottom">
-                    <Button
-                        variant="outline"
-                        size="sm"
+                    <button
                         onClick={() => setShowMcpDrawer(true)}
                         aria-label="打开 MCP 服务面板"
-                        className="text-foreground/80 h-8 gap-2 px-2.5 font-mono text-[0.6875rem] font-semibold">
-                        <Bot className="text-primary size-3.5" />
+                        className="text-text-secondary hover:bg-tint-surface-hover hover:text-ink flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2 font-mono text-[0.6875rem] transition-colors duration-150">
+                        <Bot className="text-accent-azure size-3.5" />
                         <StatusDot
                             tone={mcpStatus?.is_running ? 'ok' : 'idle'}
                             pulse={mcpStatus?.is_running}
                         />
-                        <span className="tracking-widest uppercase">
-                            MCP:{mcpStatus?.port ?? 3001}
-                        </span>
-                    </Button>
+                        <span>MCP:{mcpStatus?.port ?? 3001}</span>
+                    </button>
                 </ActionTooltip>
 
-                <div className="border-border bg-secondary/40 flex h-8 items-center rounded-sm border px-3">
-                    <div className="text-foreground/80 flex shrink-0 items-center gap-2 font-mono text-[0.6875rem] font-semibold">
+                <div className="bg-tint-surface flex h-7 items-center rounded-md px-2">
+                    <div className="text-text-secondary flex shrink-0 items-center gap-1.5 font-mono text-[0.6875rem]">
                         <StatusDot
                             tone={isMonitoring ? 'ok' : statusType === 'error' ? 'bad' : 'idle'}
                             pulse={isMonitoring}
                         />
                         {isMonitoring ? (
-                            <span className="text-foreground/80">
+                            <span className="text-text-secondary">
                                 {ip}:{port}
                             </span>
                         ) : (
@@ -95,16 +94,16 @@ export function Header({
                                     onClick={() => setShowConfig(true)}
                                     disabled={isConnecting}
                                     aria-label="配置连接参数"
-                                    className="text-muted-foreground hover:text-foreground/80 cursor-pointer transition-colors disabled:pointer-events-none">
+                                    className="text-text-tertiary hover:text-ink cursor-pointer transition-colors disabled:pointer-events-none">
                                     {ip}:{port}
                                 </button>
                             </ActionTooltip>
                         )}
                     </div>
 
-                    <div className="border-border mx-2 h-3.5 shrink-0 border-r" />
+                    <div className="bg-tint-surface-border mx-2 h-3.5 w-px shrink-0" />
 
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-0.5">
                         <ActionTooltip content="修改连接配置" side="bottom">
                             <Button
                                 variant="ghost"
@@ -112,7 +111,7 @@ export function Header({
                                 onClick={() => setShowConfig(true)}
                                 disabled={isConnecting}
                                 aria-label="修改连接配置"
-                                className="text-muted-foreground hover:text-primary">
+                                className="text-text-tertiary hover:text-accent-azure">
                                 <Sliders className="size-3" />
                             </Button>
                         </ActionTooltip>
@@ -124,7 +123,7 @@ export function Header({
                                     size="icon-xs"
                                     onClick={handleStop}
                                     aria-label="断开当前连接"
-                                    className="text-muted-foreground hover:text-destructive">
+                                    className="text-text-tertiary hover:text-destructive">
                                     <Square className="size-2.5 fill-current" />
                                 </Button>
                             </ActionTooltip>
@@ -138,9 +137,9 @@ export function Header({
                                     onClick={handleStart}
                                     disabled={isConnecting}
                                     aria-label={isConnecting ? '正在连接...' : '开始连接'}
-                                    className="text-muted-foreground hover:text-primary">
+                                    className="text-text-tertiary hover:text-accent-azure">
                                     {isConnecting ? (
-                                        <Loader2 className="text-primary size-3 animate-spin" />
+                                        <Loader2 className="text-accent-azure size-3 animate-spin" />
                                     ) : (
                                         <Play className="size-2.5 fill-current" />
                                     )}
@@ -153,7 +152,7 @@ export function Header({
 
             {statusType === 'error' && statusMessage && showToast && (
                 <div
-                    className="border-sig-bad/30 bg-popover animate-in fade-in slide-in-from-top-2 text-sig-bad fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 rounded-sm border px-4 py-2 text-xs font-medium shadow-2xl"
+                    className="border-sig-bad/30 bg-elevated animate-in fade-in slide-in-from-top-2 text-sig-bad fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 rounded-lg border px-4 py-2 text-xs font-medium shadow-l4"
                     role="alert">
                     <StatusDot tone="bad" />
                     <span className="max-w-md truncate">{statusMessage}</span>

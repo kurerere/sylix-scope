@@ -39,9 +39,9 @@ function TooltipContent({
                 <TooltipPrimitive.Popup
                     data-slot="tooltip-content"
                     className={cn(
-                        'pointer-events-none z-[9999] overflow-hidden rounded-md px-2.5 py-1 text-xs font-medium shadow-xl transition-all select-none whitespace-nowrap',
-                        'bg-zinc-900 text-zinc-50 border border-zinc-800/90',
-                        'dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-200/90 dark:shadow-black/40',
+                        'pointer-events-none z-[9999] overflow-hidden rounded-md px-2.5 py-1 text-xs font-medium shadow-l3 transition-all select-none whitespace-nowrap',
+                        'bg-ink text-page border border-border-strong',
+                        '',
                         'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
                         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
                         className,

@@ -17,7 +17,7 @@ function DialogClose(props: DialogPrimitive.Close.Props) {
 }
 
 const overlayClass = cn(
-    'fixed inset-0 z-50 bg-black/60',
+    'fixed inset-0 z-50 bg-[var(--scrim)]',
     'data-open:animate-in data-open:fade-in-0',
     'data-closed:animate-out data-closed:fade-out-0',
 )
@@ -27,7 +27,7 @@ function DialogCloseButton() {
         <DialogPrimitive.Close
             aria-label="关闭"
             title="关闭"
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 absolute top-3 right-3 rounded-sm p-1 transition-colors outline-none focus-visible:ring-2">
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 absolute top-3 right-3 rounded-md p-1 transition-colors outline-none focus-visible:ring-2">
             <X className="size-4" />
         </DialogPrimitive.Close>
     )
@@ -45,7 +45,7 @@ function DialogContent({
             <DialogPrimitive.Popup
                 data-slot="dialog-content"
                 className={cn(
-                    'bg-popover text-popover-foreground fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-md border border-border p-6 shadow-lg outline-none',
+                    'bg-popover text-popover-foreground fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border border-border p-6 shadow-l4 outline-none',
                     'data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95',
                     'data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
                     className,
@@ -70,7 +70,7 @@ function SheetContent({
             <DialogPrimitive.Popup
                 data-slot="sheet-content"
                 className={cn(
-                    'bg-popover text-popover-foreground fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-md flex-col gap-4 overflow-y-auto border-l border-border p-6 shadow-lg outline-none',
+                    'bg-popover text-popover-foreground fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-md flex-col gap-4 overflow-y-auto border-l border-border p-6 shadow-l4 outline-none',
                     'data-open:animate-in data-open:fade-in-0 data-open:slide-in-from-right-4',
                     'data-closed:animate-out data-closed:fade-out-0 data-closed:slide-in-from-right-4',
                     className,

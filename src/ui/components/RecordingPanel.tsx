@@ -47,7 +47,7 @@ export function RecordingPanel({
     return (
         <>
             <div
-                className={`bg-popover border-border fixed right-6 bottom-6 z-40 rounded-sm border shadow-2xl transition-colors duration-300 ${
+                className={`bg-popover border-border fixed right-6 bottom-6 z-40 rounded-xl border shadow-l4 transition-colors duration-300 ${
                     isRecording
                         ? 'recording-active p-4'
                         : 'hover:border-muted-foreground/40 px-4 py-2.5'
@@ -101,7 +101,7 @@ export function RecordingPanel({
                                 onClick={handleStartClick}
                                 size="sm"
                                 aria-label="开始录制"
-                                className="border-sig-bad/40 bg-sig-bad/10 text-sig-bad hover:bg-sig-bad/20 hover:text-sig-bad h-7 cursor-pointer gap-1 rounded-sm border px-3.5 text-xs font-bold">
+                                className="border-sig-bad/40 bg-sig-bad/10 text-sig-bad hover:bg-sig-bad/20 hover:text-sig-bad h-7 cursor-pointer gap-1 rounded-md border px-3.5 text-xs font-bold">
                                 <Circle className="size-2.5 fill-current" />
                                 <span>开始录制</span>
                             </Button>

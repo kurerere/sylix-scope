@@ -122,7 +122,7 @@ function ConnectionConfigModalContent({
                             {showHistoryDropdown &&
                                 connection.historyList &&
                                 connection.historyList.length > 0 && (
-                                    <div className="border-border bg-popover animate-in fade-in-50 slide-in-from-top-1 absolute right-0 left-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-sm border p-1 shadow-xl duration-150">
+                                    <div className="border-border bg-popover animate-in fade-in-50 slide-in-from-top-1 absolute right-0 left-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border p-1 shadow-l2 duration-150">
                                         {connection.historyList.map((item) => (
                                             <div
                                                 key={`${item.ip}-${item.port}-${item.username}`}

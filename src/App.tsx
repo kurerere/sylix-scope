@@ -43,47 +43,61 @@ function AppLayout() {
         await session.stopMonitoring()
     }
 
+    const viewTitle =
+        activeTab === 'monitor'
+            ? '实时监控'
+            : activeTab === 'network'
+              ? '网络看板'
+              : activeTab === 'settings'
+                ? '设置'
+                : '历史记录'
+
     return (
-        <div className="bg-background text-foreground flex h-screen w-screen overflow-hidden antialiased">
-            <Sidebar
+        <div className="bg-wash text-foreground flex h-screen w-screen flex-col overflow-hidden antialiased">
+            <Header
                 activeTab={activeTab}
-                setActiveTab={setActiveTab}
                 isMonitoring={session.isMonitoring}
-                cpuWarning={cpuWarning}
-                memWarning={memWarning}
+                isConnecting={session.isConnecting}
+                ip={session.ip}
+                port={session.port}
+                setShowConfig={setShowConfig}
+                handleStart={handleStart}
+                handleStop={handleStop}
+                statusMessage={session.statusMessage}
+                statusType={session.statusType}
             />
 
-            <main className="z-10 flex h-full flex-1 flex-col overflow-hidden">
-                <Header
+            <div className="flex min-h-0 flex-1 gap-1.5 px-1.5 pb-1.5">
+                <Sidebar
                     activeTab={activeTab}
+                    setActiveTab={setActiveTab}
                     isMonitoring={session.isMonitoring}
-                    isConnecting={session.isConnecting}
-                    ip={session.ip}
-                    port={session.port}
-                    setShowConfig={setShowConfig}
-                    handleStart={handleStart}
-                    handleStop={handleStop}
-                    statusMessage={session.statusMessage}
-                    statusType={session.statusType}
+                    cpuWarning={cpuWarning}
+                    memWarning={memWarning}
                 />
 
-                <div className="min-h-0 flex-1 overflow-y-auto p-6 pb-24">
-                    {activeTab === 'monitor' ? (
-                        <MonitorView />
-                    ) : activeTab === 'network' ? (
-                        <NetworkView />
-                    ) : activeTab === 'settings' ? (
-                        <SettingsView
-                            warningCpu={thresholds.warningCpu}
-                            setWarningCpu={thresholds.setWarningCpu}
-                            warningMem={thresholds.warningMem}
-                            setWarningMem={thresholds.setWarningMem}
-                        />
-                    ) : (
-                        <HistoryView />
-                    )}
-                </div>
-            </main>
+                <main className="bg-page border-border z-10 flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl border">
+                    <div className="border-border flex h-10 shrink-0 items-center justify-between border-b px-4">
+                        <h2 className="text-foreground text-sm font-semibold">{viewTitle}</h2>
+                    </div>
+                    <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-24">
+                        {activeTab === 'monitor' ? (
+                            <MonitorView />
+                        ) : activeTab === 'network' ? (
+                            <NetworkView />
+                        ) : activeTab === 'settings' ? (
+                            <SettingsView
+                                warningCpu={thresholds.warningCpu}
+                                setWarningCpu={thresholds.setWarningCpu}
+                                warningMem={thresholds.warningMem}
+                                setWarningMem={thresholds.setWarningMem}
+                            />
+                        ) : (
+                            <HistoryView />
+                        )}
+                    </div>
+                </main>
+            </div>
 
             <ConnectionConfigModal
                 show={showConfig}
