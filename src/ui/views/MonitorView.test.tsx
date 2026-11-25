@@ -9,7 +9,7 @@ import { MonitorView } from './MonitorView'
 
 vi.mock('recharts', () => ({
     ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-    AreaChart: ({ children, onClick, data }: any) => (
+    LineChart: ({ children, onClick, data }: any) => (
         <svg
             data-testid="mock-area-chart"
             onClick={() => {
@@ -27,7 +27,7 @@ vi.mock('recharts', () => ({
             {children}
         </svg>
     ),
-    Area: () => <g />,
+    Line: () => <g />,
     XAxis: () => <g />,
     YAxis: () => <g />,
     CartesianGrid: () => <g />,
@@ -269,7 +269,6 @@ describe('MonitorView Component', () => {
             </ThemeProvider>,
         )
 
-        expect(screen.getByText('CONNECTING')).toBeDefined()
         expect(screen.getByText('正在连接板卡...')).toBeDefined()
     })
 
@@ -373,23 +372,21 @@ describe('MonitorView Component', () => {
     })
 
     it('renders CPU core usage and scaled progress bar width correctly', () => {
-        const { container } = render(
+        render(
             <ThemeProvider>
                 <MonitorView />
             </ThemeProvider>,
         )
 
-        expect(screen.getByText('Core 0')).toBeDefined()
-        expect(screen.getByText('Core 1')).toBeDefined()
-
-        const coreGrid = container.querySelector('.grid.grid-cols-2')
+        const coreGrid = screen.getByText('Core 0').closest('.grid')
         expect(coreGrid).not.toBeNull()
+        expect(coreGrid?.textContent).toContain('Core 1')
         expect(coreGrid?.textContent).toContain('20.0%')
         expect(coreGrid?.textContent).toContain('25.0%')
 
-        const coreBars = container.querySelectorAll('.grid.grid-cols-2 .bg-secondary div')
-        expect(coreBars.length).toBe(2)
-        expect((coreBars[0] as HTMLElement).style.width).toBe('40%')
-        expect((coreBars[1] as HTMLElement).style.width).toBe('50%')
+        const coreBars = coreGrid?.querySelectorAll<HTMLElement>('.bg-secondary div')
+        expect(coreBars).toHaveLength(2)
+        expect(coreBars?.[0].style.width).toBe('40%')
+        expect(coreBars?.[1].style.width).toBe('50%')
     })
 })

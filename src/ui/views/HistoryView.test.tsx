@@ -82,11 +82,7 @@ describe('HistoryView Component', () => {
 
         expect(screen.getByText('录制历史')).toBeInTheDocument()
         expect(screen.getByText('session-a')).toBeInTheDocument()
-        expect(
-            screen.getAllByText((_, el) =>
-                (el?.textContent ?? '').includes('请在左侧列表中选择一次性能录制'),
-            )[0],
-        ).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: '录制回放' })).toBeInTheDocument()
     })
 
     it('shows empty list hint when no records', () => {

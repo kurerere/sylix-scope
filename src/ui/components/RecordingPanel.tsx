@@ -46,29 +46,15 @@ export function RecordingPanel({
 
     return (
         <>
-            <div
-                className={`bg-popover border-border fixed right-6 bottom-6 z-40 rounded-sm border shadow-2xl transition-colors duration-300 ${
-                    isRecording
-                        ? 'recording-active p-4'
-                        : 'hover:border-muted-foreground/40 px-4 py-2.5'
-                }`}
+            <footer
+                className="bg-rail flex shrink-0 justify-end border-t px-3 py-2 sm:px-6 lg:px-8"
                 data-testid="recording-panel">
                 {isRecording ? (
-                    <div className="flex items-center gap-4">
-                        <div className="relative flex size-8 items-center justify-center">
-                            <div className="animate-ripple-rose-1 bg-sig-bad/30 absolute inset-0 rounded-[1px]" />
-                            <div className="animate-ripple-rose-2 bg-sig-bad/30 absolute inset-0 rounded-[1px]" />
-                            <div className="animate-ripple-rose-3 bg-sig-bad/30 absolute inset-0 rounded-[1px]" />
-                            <div className="bg-sig-bad relative flex size-4 items-center justify-center rounded-[1px]">
-                                <span className="size-1.5 animate-pulse rounded-[1px] bg-white" />
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col pr-2">
-                            <span className="text-sig-bad text-[0.6875rem] font-bold tracking-widest uppercase">
-                                正在录制
-                            </span>
-                            <span className="text-foreground font-mono text-lg font-bold tracking-widest tabular-nums">
+                    <div className="flex flex-wrap items-center justify-end gap-3">
+                        <div className="flex items-center gap-2">
+                            <span aria-hidden="true" className="bg-sig-bad size-2 rounded-[1px]" />
+                            <span className="text-sig-bad text-xs font-semibold">正在录制</span>
+                            <span className="text-foreground font-mono text-sm font-semibold">
                                 {formatTime(recordingSeconds)}
                             </span>
                         </div>
@@ -86,16 +72,7 @@ export function RecordingPanel({
                         </ActionTooltip>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2.5">
-                            <span className="bg-sig-bad relative flex size-2 items-center justify-center rounded-[1px]">
-                                <span className="bg-sig-bad/40 absolute -inset-1 animate-ping rounded-[1px] opacity-75" />
-                            </span>
-                            <span className="text-muted-foreground text-xs font-medium tracking-wide">
-                                就绪 • 等待录制
-                            </span>
-                        </div>
-
+                    <div className="flex flex-wrap items-center justify-end gap-3">
                         <ActionTooltip content="开始录制" side="top">
                             <Button
                                 onClick={handleStartClick}
@@ -108,7 +85,7 @@ export function RecordingPanel({
                         </ActionTooltip>
                     </div>
                 )}
-            </div>
+            </footer>
 
             <RecordingPausedModal
                 show={showPausedModal}

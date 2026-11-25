@@ -1,4 +1,4 @@
-import { Server, Play, Sliders, Square, Loader2, Bot, X } from 'lucide-react'
+import { Play, Sliders, Square, Loader2, Bot, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { useMcpServer } from '@/application/useMcpServer'
@@ -45,48 +45,48 @@ export function Header({
 
     return (
         <header
-            className={`border-border bg-card flex shrink-0 items-center justify-between border-b px-8 ${isMac ? 'h-20 pt-4' : 'h-16'}`}
+            className={`border-border bg-card flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b px-3 py-3 sm:px-6 lg:min-h-18 lg:px-8 ${isMac ? 'pt-7 lg:pt-5' : ''}`}
             data-tauri-drag-region>
-            <div className="flex items-center gap-3">
-                <Server className="text-muted-foreground size-4" />
-                <span className="text-foreground text-xs font-bold tracking-widest uppercase">
-                    {activeTab === 'monitor'
-                        ? '实时监控'
-                        : activeTab === 'network'
-                          ? '网络看板'
-                          : activeTab === 'settings'
-                            ? '设置'
-                            : '历史记录'}
-                </span>
-            </div>
+            <h1 className="text-foreground text-lg font-semibold sm:text-xl">
+                {activeTab === 'monitor'
+                    ? '实时监控'
+                    : activeTab === 'network'
+                      ? '网络看板'
+                      : activeTab === 'settings'
+                        ? '设置'
+                        : '历史记录'}
+            </h1>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <ActionTooltip content={mcpTooltipText} side="bottom">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setShowMcpDrawer(true)}
                         aria-label="打开 MCP 服务面板"
-                        className="text-foreground/80 h-8 gap-2 px-2.5 font-mono text-[0.6875rem] font-semibold">
+                        className="gap-1.5 font-mono">
                         <Bot className="text-primary size-3.5" />
-                        <StatusDot
-                            tone={mcpStatus?.is_running ? 'ok' : 'idle'}
-                            pulse={mcpStatus?.is_running}
-                        />
-                        <span className="tracking-widest uppercase">
-                            MCP:{mcpStatus?.port ?? 3001}
-                        </span>
+                        <StatusDot tone={mcpStatus?.is_running ? 'ok' : 'idle'} />
+                        <span className="hidden sm:inline">MCP {mcpStatus?.port ?? 3001}</span>
                     </Button>
                 </ActionTooltip>
 
-                <div className="border-border bg-secondary/40 flex h-8 items-center rounded-sm border px-3">
-                    <div className="text-foreground/80 flex shrink-0 items-center gap-2 font-mono text-[0.6875rem] font-semibold">
+                <div className="border-border bg-secondary/50 flex flex-wrap items-center gap-2 rounded-sm border py-1 pr-1 pl-2.5">
+                    <div className="flex min-w-0 items-center gap-2 text-xs">
                         <StatusDot
                             tone={isMonitoring ? 'ok' : statusType === 'error' ? 'bad' : 'idle'}
-                            pulse={isMonitoring}
                         />
+                        <span className={isMonitoring ? 'text-sig-ok' : 'text-muted-foreground'}>
+                            {isMonitoring
+                                ? '已连接'
+                                : isConnecting
+                                  ? '连接中'
+                                  : isError
+                                    ? '连接异常'
+                                    : '未连接'}
+                        </span>
                         {isMonitoring ? (
-                            <span className="text-foreground/80">
+                            <span className="font-mono break-all">
                                 {ip}:{port}
                             </span>
                         ) : (
@@ -95,16 +95,14 @@ export function Header({
                                     onClick={() => setShowConfig(true)}
                                     disabled={isConnecting}
                                     aria-label="配置连接参数"
-                                    className="text-muted-foreground hover:text-foreground/80 cursor-pointer transition-colors disabled:pointer-events-none">
+                                    className="text-muted-foreground hover:text-foreground font-mono break-all transition-colors disabled:pointer-events-none">
                                     {ip}:{port}
                                 </button>
                             </ActionTooltip>
                         )}
                     </div>
 
-                    <div className="border-border mx-2 h-3.5 shrink-0 border-r" />
-
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="border-border flex shrink-0 items-center gap-1 border-l pl-1">
                         <ActionTooltip content="修改连接配置" side="bottom">
                             <Button
                                 variant="ghost"
@@ -121,11 +119,12 @@ export function Header({
                             <ActionTooltip content="断开当前连接" side="bottom">
                                 <Button
                                     variant="ghost"
-                                    size="icon-xs"
+                                    size="sm"
                                     onClick={handleStop}
                                     aria-label="断开当前连接"
-                                    className="text-muted-foreground hover:text-destructive">
-                                    <Square className="size-2.5 fill-current" />
+                                    className="text-muted-foreground hover:text-destructive h-7">
+                                    <Square className="size-3 fill-current" />
+                                    <span className="hidden sm:inline">断开</span>
                                 </Button>
                             </ActionTooltip>
                         ) : (
@@ -133,17 +132,19 @@ export function Header({
                                 content={isConnecting ? '正在连接...' : '开始连接'}
                                 side="bottom">
                                 <Button
-                                    variant="ghost"
-                                    size="icon-xs"
+                                    size="sm"
                                     onClick={handleStart}
                                     disabled={isConnecting}
                                     aria-label={isConnecting ? '正在连接...' : '开始连接'}
-                                    className="text-muted-foreground hover:text-primary">
+                                    className="h-7">
                                     {isConnecting ? (
                                         <Loader2 className="text-primary size-3 animate-spin" />
                                     ) : (
                                         <Play className="size-2.5 fill-current" />
                                     )}
+                                    <span className="hidden sm:inline">
+                                        {isConnecting ? '连接中' : '开始连接'}
+                                    </span>
                                 </Button>
                             </ActionTooltip>
                         )}

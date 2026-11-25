@@ -86,7 +86,7 @@ MCP 服务默认监听所有网卡，局域网内持有 Token 的客户端都可
 
 ![采集工作流](docs/workflow.svg)
 
-设计决策记录见 [`docs/adr`](docs/adr)，功能规格见 [`docs/specs`](docs/specs)，界面设计规范见 [`docs/design.md`](docs/design.md)。
+设计决策记录见 [`docs/adr`](docs/adr)，功能规格见 [`docs/specs`](docs/specs)，界面设计规范见 [`DESIGN.md`](DESIGN.md)。
 
 ## 开发
 

@@ -11,6 +11,8 @@ describe('TelemetryChartCard Component', () => {
         isPaused: false,
         selectedPoint: null,
         setSelectedIndex: vi.fn(),
+        warningCpu: 80,
+        warningMem: 85,
     }
 
     it('renders empty placeholder when chartData is empty', () => {
@@ -55,5 +57,15 @@ describe('TelemetryChartCard Component', () => {
         ]
         const { container } = render(<TelemetryChartCard {...defaultProps} chartData={data} />)
         expect(container.querySelector('.recharts-responsive-container')).toBeInTheDocument()
+    })
+
+    it('counts a sample once when either or both resources reach the threshold', () => {
+        const chartData = [
+            { time: '12:00:00', cpu: 80, mem: 85 },
+            { time: '12:00:01', cpu: 43, mem: 86 },
+            { time: '12:00:02', cpu: 79, mem: 84 },
+        ]
+        render(<TelemetryChartCard {...defaultProps} chartData={chartData} />)
+        expect(screen.getByText('越阈采样 2 次')).toBeInTheDocument()
     })
 })

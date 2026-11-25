@@ -28,17 +28,16 @@ export function CpuMetricCard({
 }: CpuMetricCardProps) {
     const isOverload = cpuUsage >= warningCpu
     const cardStatusClass = isOverload
-        ? 'alert-glow-rose border-sig-bad/40'
+        ? 'border-sig-bad/50'
         : isSpiking
-          ? 'alert-glow-amber border-sig-warn/40'
+          ? 'border-sig-warn/50'
           : 'border-border'
 
     const badgeTone = isOverload ? 'bad' : isSpiking ? 'warn' : 'ok'
     const gaugeTone = isOverload ? 'bad' : isSpiking ? 'warn' : 'ok'
 
     return (
-        <Card
-            className={`relative col-span-1 flex flex-col md:col-span-1 lg:col-span-1 ${cardStatusClass}`}>
+        <Card className={`relative flex flex-col ${cardStatusClass}`}>
             <div className="relative z-10 flex items-center justify-between px-4 pt-4 select-none">
                 <span className="text-muted-foreground text-xs font-semibold">CPU 使用情况</span>
                 <Badge tone={badgeTone}>

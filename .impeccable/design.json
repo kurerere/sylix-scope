@@ -1,0 +1,36 @@
+{
+    "schemaVersion": 2,
+    "generatedAt": "2026-11-25T00:29:00Z",
+    "title": "Design System: SylixScope",
+    "extensions": {
+        "colorMeta": {
+            "rail": { "role": "neutral", "displayName": "Navigation and control rail" },
+            "plot": { "role": "neutral", "displayName": "Chart and table surface" },
+            "chart-cpu": { "role": "data", "displayName": "CPU solid line" },
+            "chart-mem": { "role": "data", "displayName": "Memory dashed line" },
+            "sig-warn": { "role": "status", "displayName": "Threshold and pause" }
+        },
+        "breakpoints": [
+            { "name": "lg", "value": "64rem" },
+            { "name": "xl", "value": "80rem" }
+        ]
+    },
+    "components": [
+        {
+            "name": "Time window",
+            "kind": "custom",
+            "refersTo": "segmented-control",
+            "description": "Choose one live telemetry window.",
+            "html": "<div class=\"window\" aria-label=\"时间窗口\" role=\"group\"><button aria-pressed=\"false\">10s</button><button aria-pressed=\"true\">30s</button><button aria-pressed=\"false\">60s</button></div>",
+            "css": ".window{display:inline-flex;gap:2px;background:#192124;border:1px solid #425356;border-radius:2px;padding:2px}.window button{font:inherit;border:0;border-radius:2px;padding:4px 8px;background:transparent;color:#b5c5c4}.window button[aria-pressed=true]{color:#a8e0e1;background:#293b3e}.window button:focus-visible{outline:2px solid #a8e0e1;outline-offset:2px}"
+        }
+    ],
+    "narrative": {
+        "northStar": "SylixOS 遥测工作区",
+        "overview": "在共用时间轴上对照板卡 CPU、内存和越阈采样，再检查相邻的进程表。",
+        "keyCharacteristics": ["常驻连接工具", "实线与虚线并用", "单独占位的录制底栏"],
+        "rules": [
+            { "name": "阈值刻线", "section": "colors", "body": "任一资源达到当前阈值时，在采样时间绘制一条琥珀刻线。" }
+        ]
+    }
+}

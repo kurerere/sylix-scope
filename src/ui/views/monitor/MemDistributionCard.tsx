@@ -67,8 +67,8 @@ export function MemDistributionCard({
 
     return (
         <Card
-            className={`relative col-span-1 flex flex-col md:col-span-2 lg:col-span-2 ${
-                memWarning ? 'alert-glow-rose border-sig-bad/40' : 'border-border'
+            className={`relative flex min-w-0 flex-col ${
+                memWarning ? 'border-sig-bad/50' : 'border-border'
             }`}>
             <div className="relative z-10 flex items-center justify-between px-4 pt-4 select-none">
                 <span className="text-muted-foreground text-xs font-semibold">内存状态与分配</span>

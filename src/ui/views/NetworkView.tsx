@@ -63,14 +63,14 @@ function OverviewCard({
             title={tooltip}
             aria-label={ariaLabel}
             onClick={onClick}
-            className="border-border bg-card hover:border-primary/40 cursor-pointer rounded-sm border p-4 text-left transition-colors">
-            <div className="flex items-center justify-between">
+            className="bg-card hover:bg-accent flex min-w-0 flex-col justify-between gap-1 px-3 py-3 text-left transition-colors focus-visible:z-10 sm:px-5">
+            <div className="flex flex-wrap items-center justify-between gap-1">
                 <span className="text-muted-foreground text-xs font-medium">{title}</span>
                 {icon}
             </div>
             <div className="mt-2 flex items-baseline gap-2">
                 <span
-                    className={`text-2xl font-bold tabular-nums ${valueClass ?? 'text-foreground'}`}>
+                    className={`font-mono text-2xl font-semibold ${valueClass ?? 'text-foreground'}`}>
                     {value}
                 </span>
                 <span className="text-muted-foreground text-xs">{unit}</span>
@@ -106,21 +106,17 @@ export function NetworkView() {
 
     if (!isMonitoring) {
         return (
-            <div className="flex h-full flex-col items-center justify-center p-8 text-center select-none">
-                <div className="bg-secondary border-border rounded-sm border p-4">
-                    <Network className="text-muted-foreground size-10" />
-                </div>
-                <h2 className="text-foreground mt-4 text-base font-bold">未连接板卡</h2>
-                <p className="text-muted-foreground mt-1 text-xs">
-                    点击顶部“开始连接”后查看网络数据
-                </p>
+            <div className="bg-plot flex min-h-64 flex-col items-center justify-center gap-2 rounded-sm border p-5 text-center">
+                <Network className="text-muted-foreground size-6" aria-hidden="true" />
+                <h2 className="text-foreground text-base font-semibold">未连接板卡</h2>
+                <p className="text-muted-foreground text-sm">点击顶部“开始连接”后查看网络数据</p>
             </div>
         )
     }
 
     return (
-        <div className="flex flex-col space-y-6">
-            <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center">
+        <div className="@container flex flex-col gap-4">
+            <div className="bg-rail flex flex-wrap items-center justify-between gap-3 rounded-sm border px-3 py-2.5 sm:px-4">
                 <SegmentedControl
                     size="default"
                     aria-label="网络数据子视图"
@@ -129,8 +125,8 @@ export function NetworkView() {
                     options={SUB_TAB_OPTIONS}
                 />
 
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-xs">
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
                         <Clock className="text-muted-foreground size-3.5" />
                         <span className="text-muted-foreground">自动刷新:</span>
                         <SegmentedControl
@@ -164,7 +160,7 @@ export function NetworkView() {
                 </Alert>
             )}
 
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="bg-border grid grid-cols-2 gap-px rounded-sm border @2xl:grid-cols-4">
                 <OverviewCard
                     title="网络接口"
                     icon={<Wifi className="text-primary size-4" />}
@@ -204,10 +200,10 @@ export function NetworkView() {
                 />
                 <OverviewCard
                     title="UDP 端点"
-                    icon={<Radio className="text-sig-warn size-4" />}
+                    icon={<Radio className="text-chart-mem size-4" />}
                     value={summary.udpCount}
                     unit="个端点"
-                    valueClass="text-sig-warn"
+                    valueClass="text-chart-mem"
                     ariaLabel="筛选 UDP 端点"
                     tooltip="点击筛选 UDP 端点"
                     onClick={() => {

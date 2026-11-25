@@ -1,6 +1,6 @@
 import { Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
     Table,
@@ -54,23 +54,17 @@ export function ProcessTableCard({
     processSummary,
 }: ProcessTableCardProps) {
     return (
-        <Card className="flex flex-col border p-6">
-            <CardHeader className="flex flex-col justify-between gap-4 p-0 pb-6 md:flex-row md:items-center">
-                <div className="space-y-1">
-                    <CardTitle className="text-foreground text-sm font-semibold">
-                        活跃进程列表
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground text-xs font-medium">
-                        内核与应用进程的资源占用
-                    </CardDescription>
-                </div>
+        <Card className="gap-0 py-0">
+            <CardHeader className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
+                <h2 className="text-base font-semibold">活跃进程列表</h2>
                 <div className="relative w-full md:w-72">
                     <Input
                         type="text"
+                        aria-label="搜索进程"
                         placeholder="搜索进程名、命令行或 PID..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="border-border bg-secondary/60 text-foreground placeholder:text-muted-foreground/60 py-2.5 pr-8 pl-9 text-xs font-medium"
+                        className="bg-plot pr-8 pl-9 text-xs font-medium"
                     />
                     <Search className="text-muted-foreground/60 absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2" />
                     {searchTerm && (
@@ -87,11 +81,11 @@ export function ProcessTableCard({
                 </div>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col p-0">
-                <div className="border-border bg-secondary/30 flex flex-col overflow-hidden rounded-xl border">
+                <div className="bg-plot flex flex-col overflow-hidden border-t">
                     {isMonitoring && displayedProcesses.length > 0 && (
                         <div
                             data-testid="process-summary-footer"
-                            className="border-border/60 bg-secondary/40 text-muted-foreground flex flex-wrap items-center justify-between gap-3 border-b px-6 py-2.5 font-mono text-xs select-none">
+                            className="bg-rail text-muted-foreground flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2.5 font-mono text-xs select-none sm:px-5">
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
                                 <span data-testid="summary-process-count">
                                     进程：

@@ -1,5 +1,4 @@
 import {
-    Sliders,
     Sun,
     Moon,
     Laptop,
@@ -136,22 +135,8 @@ export function SettingsView({
     ] as const
 
     return (
-        <div className="mx-auto max-w-6xl space-y-6">
-            <div className="flex items-center gap-3.5">
-                <div className="bg-primary/10 border-primary/30 text-primary flex size-10 items-center justify-center rounded-sm border">
-                    <Sliders className="size-5" />
-                </div>
-                <div>
-                    <h1 className="text-foreground text-sm font-bold tracking-widest uppercase">
-                        设置
-                    </h1>
-                    <p className="text-muted-foreground mt-0.5 text-xs font-medium">
-                        告警阈值、外观与数据存储
-                    </p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="@container">
+            <div className="grid grid-cols-1 gap-4 @3xl:grid-cols-2">
                 <Card className="flex flex-col justify-between p-6">
                     <div>
                         <CardHeader className="border-border/50 border-b p-0 pb-4">
@@ -378,7 +363,7 @@ export function SettingsView({
                     </div>
                 </Card>
 
-                <Card className="flex flex-col justify-between p-6 md:col-span-2">
+                <Card className="flex flex-col justify-between p-6">
                     <div>
                         <CardHeader className="border-border/50 border-b p-0 pb-4">
                             <div className="flex items-center justify-between">

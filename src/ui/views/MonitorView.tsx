@@ -51,25 +51,8 @@ export function MonitorView() {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <CpuMetricCard
-                    cpuUsage={metrics.cpu_usage}
-                    warningCpu={warningCpu}
-                    isSpiking={analytics.isSpiking}
-                    peakCpu={analytics.peakCpu}
-                    avgCpu={analytics.avgCpu}
-                    cpuCoresList={analytics.cpuCoresList}
-                />
-
-                <MemDistributionCard
-                    metrics={metrics}
-                    memWarning={memWarning}
-                    peakMemPercent={analytics.peakMemPercent}
-                    avgMemPercent={analytics.avgMemPercent}
-                    peakMemUsed={analytics.peakMemUsed}
-                />
-
+        <div className="space-y-5">
+            <div className="overflow-hidden rounded-sm border">
                 <BoardMetricsCard
                     isMonitoring={isMonitoring}
                     isConnecting={isConnecting}
@@ -81,16 +64,17 @@ export function MonitorView() {
                     setIsPaused={setIsPaused}
                     onReboot={rebootTarget}
                 />
+                <TelemetryChartCard
+                    chartData={chartData}
+                    historySeconds={historySeconds}
+                    setHistorySeconds={setHistorySeconds}
+                    isPaused={isPaused}
+                    selectedPoint={selectedPoint}
+                    setSelectedIndex={setSelectedIndex}
+                    warningCpu={warningCpu}
+                    warningMem={warningMem}
+                />
             </div>
-
-            <TelemetryChartCard
-                chartData={chartData}
-                historySeconds={historySeconds}
-                setHistorySeconds={setHistorySeconds}
-                isPaused={isPaused}
-                selectedPoint={selectedPoint}
-                setSelectedIndex={setSelectedIndex}
-            />
 
             <ProcessTableCard
                 isMonitoring={isMonitoring}
@@ -106,6 +90,26 @@ export function MonitorView() {
                 setSelectedProcess={setSelectedProcess}
                 processSummary={effectiveProcessSummary}
             />
+
+            <div className="@container grid gap-5">
+                <div className="grid gap-5 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+                    <CpuMetricCard
+                        cpuUsage={metrics.cpu_usage}
+                        warningCpu={warningCpu}
+                        isSpiking={analytics.isSpiking}
+                        peakCpu={analytics.peakCpu}
+                        avgCpu={analytics.avgCpu}
+                        cpuCoresList={analytics.cpuCoresList}
+                    />
+                    <MemDistributionCard
+                        metrics={metrics}
+                        memWarning={memWarning}
+                        peakMemPercent={analytics.peakMemPercent}
+                        avgMemPercent={analytics.avgMemPercent}
+                        peakMemUsed={analytics.peakMemUsed}
+                    />
+                </div>
+            </div>
         </div>
     )
 }

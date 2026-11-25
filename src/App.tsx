@@ -3,12 +3,10 @@ import { useState } from 'react'
 import {
     TelemetrySessionProvider,
     useTelemetrySession,
-    useTelemetrySnapshot,
     useTelemetryThresholds,
     useTelemetryChart,
 } from '@/application/telemetry/TelemetrySessionContext'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { calculateMemoryPercent } from '@/domain/metrics/utils'
 import { ConnectionConfigModal } from '@/ui/components/ConnectionConfigModal'
 import { RecordingPanel } from '@/ui/components/RecordingPanel'
 import { Header } from '@/ui/layout/Header'
@@ -25,13 +23,8 @@ function AppLayout() {
     const [showConfig, setShowConfig] = useState(false)
 
     const session = useTelemetrySession()
-    const { metrics } = useTelemetrySnapshot()
     const thresholds = useTelemetryThresholds()
     const chart = useTelemetryChart()
-
-    const memPercent = calculateMemoryPercent(metrics.mem_used, metrics.mem_total)
-    const cpuWarning = metrics.cpu_usage >= thresholds.warningCpu
-    const memWarning = memPercent >= thresholds.warningMem
 
     const handleStart = async () => {
         await session.startMonitoring(undefined, () => {
@@ -44,16 +37,10 @@ function AppLayout() {
     }
 
     return (
-        <div className="bg-background text-foreground flex h-screen w-screen overflow-hidden antialiased">
-            <Sidebar
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                isMonitoring={session.isMonitoring}
-                cpuWarning={cpuWarning}
-                memWarning={memWarning}
-            />
+        <div className="bg-background text-foreground flex h-dvh w-full overflow-hidden antialiased">
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-            <main className="z-10 flex h-full flex-1 flex-col overflow-hidden">
+            <main className="z-10 flex min-w-0 flex-1 flex-col overflow-hidden">
                 <Header
                     activeTab={activeTab}
                     isMonitoring={session.isMonitoring}
@@ -67,7 +54,7 @@ function AppLayout() {
                     statusType={session.statusType}
                 />
 
-                <div className="min-h-0 flex-1 overflow-y-auto p-6 pb-24">
+                <div className="min-h-0 flex-1 overflow-auto px-3 py-4 sm:px-6 lg:px-8">
                     {activeTab === 'monitor' ? (
                         <MonitorView />
                     ) : activeTab === 'network' ? (
@@ -83,6 +70,14 @@ function AppLayout() {
                         <HistoryView />
                     )}
                 </div>
+                <RecordingPanel
+                    isMonitoring={session.isMonitoring}
+                    isRecording={session.isRecording}
+                    recordingSeconds={session.recordingSeconds}
+                    isPaused={chart.isPaused}
+                    setIsPaused={chart.setIsPaused}
+                    handleToggleRecording={session.toggleRecording}
+                />
             </main>
 
             <ConnectionConfigModal
@@ -90,15 +85,6 @@ function AppLayout() {
                 onClose={() => setShowConfig(false)}
                 onStart={handleStart}
                 onStop={handleStop}
-            />
-
-            <RecordingPanel
-                isMonitoring={session.isMonitoring}
-                isRecording={session.isRecording}
-                recordingSeconds={session.recordingSeconds}
-                isPaused={chart.isPaused}
-                setIsPaused={chart.setIsPaused}
-                handleToggleRecording={session.toggleRecording}
             />
         </div>
     )

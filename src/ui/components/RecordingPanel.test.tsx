@@ -19,7 +19,6 @@ describe('RecordingPanel Component', () => {
     it('renders ready state when isMonitoring is true but not recording', () => {
         render(<RecordingPanel {...defaultProps} />)
 
-        expect(screen.getByText('就绪 • 等待录制')).toBeDefined()
         expect(screen.getByText('开始录制')).toBeDefined()
         expect(screen.queryByText('停止录制')).toBeNull()
     })

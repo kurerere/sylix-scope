@@ -12,9 +12,6 @@ export function Sidebar({
 }: {
     activeTab: 'monitor' | 'network' | 'settings' | 'history'
     setActiveTab: (tab: 'monitor' | 'network' | 'settings' | 'history') => void
-    isMonitoring?: boolean
-    cpuWarning?: boolean
-    memWarning?: boolean
 }) {
     const [isCollapsed, setIsCollapsed] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -51,25 +48,26 @@ export function Sidebar({
 
     return (
         <aside
-            className={`bg-card border-border relative z-20 flex flex-col justify-between border-r transition-all duration-300 ease-in-out select-none ${
-                isCollapsed ? 'w-16' : 'w-64'
+            className={`bg-rail border-border relative z-20 flex w-12 shrink-0 flex-col justify-between border-r select-none sm:w-16 ${
+                isCollapsed ? '' : 'lg:w-52'
             }`}>
             <div>
                 <div
                     className={`border-border flex items-center border-b pb-6 transition-all duration-300 ${
-                        isCollapsed ? 'justify-center px-0' : 'space-x-3 px-6'
+                        isCollapsed
+                            ? 'justify-center px-0'
+                            : 'justify-center lg:justify-start lg:gap-2 lg:px-4'
                     } ${isMac ? 'pt-12' : 'pt-6'}`}
                     data-tauri-drag-region>
-                    <img src="/icon.svg" alt="" draggable={false} className="size-10 shrink-0" />
+                    <img src="/icon.svg" alt="" draggable={false} className="size-8 shrink-0" />
                     {!isCollapsed && (
-                        <h1 className="text-foreground min-w-0 text-sm font-bold whitespace-nowrap">
+                        <span className="text-foreground hidden min-w-0 text-base font-bold whitespace-nowrap lg:block">
                             SylixScope
-                        </h1>
+                        </span>
                     )}
                 </div>
 
-                <nav
-                    className={`mt-8 space-y-1.5 transition-all duration-300 ${isCollapsed ? 'px-2' : 'px-4'}`}>
+                <nav aria-label="主导航" className="mt-6 space-y-1 px-1.5 sm:px-2 lg:px-3">
                     {navItems.map((item) => {
                         const Icon = item.icon
                         const isActive = activeTab === item.id
@@ -83,16 +81,18 @@ export function Sidebar({
                                     <button
                                         onClick={() => setActiveTab(item.id)}
                                         aria-label={item.label}
-                                        className={`flex w-full cursor-pointer items-center rounded-sm border py-3 transition-colors duration-200 ${
-                                            isCollapsed ? 'justify-center px-0' : 'space-x-3 px-4'
+                                        aria-current={isActive ? 'page' : undefined}
+                                        title={item.label}
+                                        className={`flex w-full items-center justify-center rounded-sm border py-3 transition-colors ${
+                                            isCollapsed ? '' : 'lg:justify-start lg:gap-3 lg:px-3'
                                         } ${
                                             isActive
-                                                ? 'border-border bg-secondary text-foreground border'
-                                                : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                                                ? 'border-primary/25 bg-primary/10 text-primary'
+                                                : 'text-muted-foreground hover:bg-secondary hover:text-foreground border-transparent'
                                         }`}>
-                                        <Icon className={isCollapsed ? 'size-5' : 'size-4'} />
+                                        <Icon className="size-4 shrink-0" />
                                         {!isCollapsed && (
-                                            <span className="text-xs font-semibold tracking-widest whitespace-nowrap uppercase">
+                                            <span className="hidden text-sm font-medium whitespace-nowrap lg:block">
                                                 {item.label}
                                             </span>
                                         )}
@@ -120,7 +120,7 @@ export function Sidebar({
                         </div>
                     </ActionTooltip>
                 ) : (
-                    <div className="text-muted-foreground flex items-center justify-between whitespace-nowrap">
+                    <div className="text-muted-foreground hidden flex-wrap gap-x-2 whitespace-nowrap lg:flex">
                         <span className="font-mono text-[0.6875rem] font-bold">
                             v{appInfo?.app_version || '1.0.0'}
                         </span>
@@ -142,7 +142,7 @@ export function Sidebar({
                         localStorage.setItem('sylixos_sidebar_collapsed', String(nextCollapsed))
                     }}
                     aria-label={isCollapsed ? '展开侧边栏' : '收起侧边栏'}
-                    className="border-border bg-card text-muted-foreground hover:text-foreground absolute top-1/2 -right-3 z-30 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-sm border transition-colors duration-200">
+                    className="border-border bg-rail text-muted-foreground hover:text-foreground absolute right-2 bottom-14 z-30 hidden size-8 items-center justify-center rounded-sm border transition-colors lg:flex">
                     {isCollapsed ? (
                         <ChevronRight className="size-3.5 transition-transform duration-200" />
                     ) : (

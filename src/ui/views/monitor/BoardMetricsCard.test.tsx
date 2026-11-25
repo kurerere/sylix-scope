@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { BoardMetricsCard } from './BoardMetricsCard'
 
 describe('BoardMetricsCard Component', () => {
-    it('renders OFFLINE status and prompt when not monitoring', () => {
+    it('prompts to connect when not monitoring', () => {
         render(
             <BoardMetricsCard
                 isMonitoring={false}
@@ -13,11 +13,10 @@ describe('BoardMetricsCard Component', () => {
                 setIsPaused={vi.fn()}
             />,
         )
-        expect(screen.getByText('OFFLINE')).toBeInTheDocument()
         expect(screen.getByText('未连接板卡，点击顶部“开始连接”。')).toBeInTheDocument()
     })
 
-    it('renders CONNECTING status when connecting', () => {
+    it('renders the connection progress message', () => {
         render(
             <BoardMetricsCard
                 isMonitoring={false}
@@ -27,7 +26,7 @@ describe('BoardMetricsCard Component', () => {
                 setIsPaused={vi.fn()}
             />,
         )
-        expect(screen.getByText('CONNECTING')).toBeInTheDocument()
+        expect(screen.getByText('正在连接板卡...')).toBeInTheDocument()
     })
 
     it('renders disabled danger reboot button when not monitoring', () => {

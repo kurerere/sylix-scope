@@ -72,10 +72,10 @@ export function HistoryView() {
     } = useHistoryPlayback()
 
     return (
-        <div className="flex h-[calc(100vh-140px)] gap-6 overflow-hidden">
-            <div className="border-border bg-card flex w-80 shrink-0 flex-col rounded-sm border p-4">
-                <div className="mb-4 flex items-center justify-between">
-                    <span className="text-foreground text-xs font-bold">录制历史</span>
+        <div className="grid min-h-full content-start gap-4 xl:grid-cols-[minmax(15rem,1fr)_minmax(0,3fr)] xl:items-stretch">
+            <div className="bg-card flex min-w-0 flex-col rounded-sm border">
+                <div className="bg-rail flex items-center justify-between gap-2 border-b px-4 py-3">
+                    <h2 className="text-foreground text-base font-semibold">录制历史</h2>
                     <ActionTooltip content="刷新录制历史列表">
                         <Button
                             onClick={() => loadRecords(false)}
@@ -89,7 +89,7 @@ export function HistoryView() {
                         </Button>
                     </ActionTooltip>
                 </div>
-                <div className="flex-1 space-y-2 overflow-y-auto pr-1">
+                <div className="max-h-72 divide-y overflow-y-auto xl:max-h-[70dvh]">
                     {records.map((rec) => (
                         <div
                             key={rec.id}
@@ -101,10 +101,10 @@ export function HistoryView() {
                                     return
                                 handleSelectRecord(rec)
                             }}
-                            className={`group relative flex cursor-pointer flex-col rounded-sm border p-3.5 transition-colors duration-200 ${
+                            className={`group relative flex cursor-pointer flex-col px-4 py-3 transition-colors ${
                                 selectedRecord?.id === rec.id
-                                    ? 'border-primary/40 bg-primary/10 text-foreground'
-                                    : 'border-border bg-secondary/40 text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                                    ? 'bg-primary/10 text-foreground'
+                                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                             }`}>
                             {editingRecordId === `sidebar-${rec.id}` ? (
                                 <InlineEditor
@@ -121,19 +121,23 @@ export function HistoryView() {
                                     className="border-border bg-background text-foreground h-6 w-[70%] rounded-sm px-2 py-0.5 font-sans text-xs"
                                 />
                             ) : (
-                                <div className="flex items-center gap-1.5">
-                                    <span
+                                <div className="flex min-w-0 items-center gap-1.5 pr-20">
+                                    <button
+                                        type="button"
+                                        aria-current={
+                                            selectedRecord?.id === rec.id ? 'true' : undefined
+                                        }
                                         onDoubleClick={(e) => {
                                             e.stopPropagation()
                                             setEditingRecordId(`sidebar-${rec.id}`)
                                         }}
-                                        className="max-w-[80%] truncate text-xs font-semibold"
+                                        className="truncate text-left text-sm font-semibold"
                                         title="双击可重命名">
                                         {rec.name}
-                                    </span>
+                                    </button>
                                 </div>
                             )}
-                            <span className="text-muted-foreground mt-1.5 font-mono text-[0.5625rem]">
+                            <span className="text-muted-foreground mt-1.5 font-mono text-xs">
                                 {formatDate(rec.start_time)}
                             </span>
                             <div className="text-muted-foreground mt-2 flex items-center justify-between text-[0.625rem]">
@@ -142,9 +146,7 @@ export function HistoryView() {
                             {editingRecordId !== `sidebar-${rec.id}` && (
                                 <div
                                     className={`absolute top-2.5 right-2.5 flex items-center transition-opacity duration-200 ${
-                                        deletingId === rec.id
-                                            ? 'opacity-100'
-                                            : 'gap-1.5 opacity-0 group-hover:opacity-100'
+                                        deletingId === rec.id ? 'opacity-100' : 'gap-1.5'
                                     }`}>
                                     {deletingId === rec.id ? (
                                         <div className="border-sig-bad/30 bg-sig-bad/10 text-sig-bad animate-in fade-in flex items-center gap-1 rounded-sm border p-0.5 text-[0.5625rem] font-bold duration-200">
@@ -215,25 +217,24 @@ export function HistoryView() {
                         </div>
                     ))}
                     {records.length === 0 && (
-                        <div className="text-muted-foreground py-12 text-center text-xs">
-                            暂无录制历史
-                        </div>
+                        <div className="text-muted-foreground px-4 py-8 text-sm">暂无录制历史</div>
                     )}
                 </div>
             </div>
 
-            <div className="border-border bg-card flex flex-1 flex-col overflow-hidden rounded-sm border p-6">
+            <div className="bg-card flex min-w-0 flex-col rounded-sm border p-4 sm:p-5">
                 {!selectedRecord ? (
-                    <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center">
-                        <Clock className="text-muted-foreground/40 mb-3 size-10" />
-                        <span className="text-muted-foreground text-xs font-semibold">
-                            请在左侧列表中选择一次性能录制以载入回放
-                        </span>
+                    <div className="bg-plot text-muted-foreground flex min-h-64 flex-1 flex-col items-center justify-center gap-2 rounded-sm border p-5 text-center">
+                        <Clock className="size-6" aria-hidden="true" />
+                        <h2 className="text-foreground text-base font-semibold">录制回放</h2>
+                        <p className="text-sm">
+                            从录制历史中选择一条记录，查看资源曲线与进程快照。
+                        </p>
                     </div>
                 ) : (
                     <div className="flex flex-1 flex-col overflow-hidden">
                         <div className="mb-4 flex items-center justify-between">
-                            <div className="flex-1">
+                            <div className="min-w-0 flex-1">
                                 {editingRecordId === `detail-${selectedRecord.id}` ? (
                                     <InlineEditor
                                         key={`edit-${selectedRecord.id}`}
@@ -251,10 +252,10 @@ export function HistoryView() {
                                         className="border-border bg-background text-foreground h-7 w-60 rounded-sm px-2 font-sans text-xs"
                                     />
                                 ) : (
-                                    <div className="group flex items-center gap-2">
-                                        <h3 className="text-foreground max-w-[400px] truncate text-sm font-bold">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <h2 className="text-foreground max-w-full truncate text-base font-semibold">
                                             {selectedRecord.name}
-                                        </h3>
+                                        </h2>
                                         <ActionTooltip content="重命名录制">
                                             <button
                                                 type="button"
@@ -265,7 +266,7 @@ export function HistoryView() {
                                                         `detail-${selectedRecord.id}`,
                                                     )
                                                 }}
-                                                className="text-muted-foreground/60 hover:text-primary cursor-pointer opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                                                className="text-muted-foreground hover:text-primary"
                                                 aria-label="重命名">
                                                 <Pencil className="size-3.5" />
                                             </button>
@@ -297,7 +298,7 @@ export function HistoryView() {
                             </div>
                         </div>
 
-                        <div className="border-border bg-secondary/30 h-44 w-full shrink-0 rounded-sm border p-2.5">
+                        <div className="bg-plot h-48 w-full shrink-0 rounded-sm border p-2.5 sm:h-60">
                             <PlaybackChart
                                 metrics={metrics}
                                 playbackIndex={playbackIndex}
@@ -305,7 +306,7 @@ export function HistoryView() {
                             />
                         </div>
 
-                        <div className="border-border bg-secondary/40 mt-4 flex shrink-0 items-center gap-4 rounded-sm border p-3 select-none">
+                        <div className="bg-rail mt-3 flex shrink-0 flex-wrap items-center gap-3 rounded-sm border p-3 select-none">
                             <ActionTooltip content={isPlaying ? '暂停回放' : '播放回放'}>
                                 <Button
                                     size="sm"
@@ -331,7 +332,7 @@ export function HistoryView() {
                                 />
                             </div>
 
-                            <div className="flex flex-1 items-center gap-3">
+                            <div className="flex min-w-40 flex-1 flex-wrap items-center gap-3">
                                 <input
                                     type="range"
                                     min={0}
@@ -339,7 +340,7 @@ export function HistoryView() {
                                     value={playbackIndex}
                                     onChange={(e) => setPlaybackIndex(Number(e.target.value))}
                                     aria-label="回放进度"
-                                    className="bg-secondary accent-primary h-1 flex-1 cursor-pointer appearance-none rounded-sm"
+                                    className="accent-primary min-w-16 flex-1"
                                 />
                                 <span className="text-muted-foreground shrink-0 font-mono text-xs font-semibold tabular-nums">
                                     {playbackIndex + 1} / {metrics.length} 秒
@@ -348,11 +349,11 @@ export function HistoryView() {
                         </div>
 
                         <div className="mt-5 flex flex-1 flex-col overflow-hidden">
-                            <div className="mb-3 flex shrink-0 items-center justify-between">
+                            <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-2">
                                 <span className="text-foreground text-xs font-bold">
                                     进程快照 ({filteredProcesses.length} 个进程)
                                 </span>
-                                <div className="flex items-center gap-3">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <Input
                                         placeholder="搜索进程..."
                                         value={procSearch}
@@ -373,7 +374,7 @@ export function HistoryView() {
                                 </div>
                             </div>
 
-                            <div className="border-border bg-secondary/10 flex-1 overflow-y-auto rounded-sm border">
+                            <div className="bg-plot min-h-32 flex-1 overflow-auto rounded-sm border">
                                 <Table>
                                     <TableHeader className="border-border bg-card sticky top-0 z-10 border-b">
                                         <TableRow className="text-muted-foreground text-xs font-bold uppercase">

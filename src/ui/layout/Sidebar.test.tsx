@@ -19,9 +19,6 @@ describe('Sidebar Component', () => {
     const defaultProps = {
         activeTab: 'monitor' as const,
         setActiveTab: vi.fn(),
-        isMonitoring: false,
-        cpuWarning: false,
-        memWarning: false,
     }
 
     beforeEach(() => {

@@ -52,7 +52,7 @@ export function SocketsTableCard({
     setSocketSearch,
 }: SocketsTableCardProps) {
     return (
-        <Card className="relative p-5">
+        <Card className="relative gap-0 py-0">
             {loading && sockets.length > 0 && (
                 <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center">
                     <div className="border-border bg-popover flex items-center gap-2 rounded-sm border px-3.5 py-1.5">
@@ -64,7 +64,7 @@ export function SocketsTableCard({
                 </div>
             )}
 
-            <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b px-3 py-3 sm:px-5">
                 <SegmentedControl
                     size="sm"
                     aria-label="协议筛选"
@@ -99,9 +99,9 @@ export function SocketsTableCard({
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="bg-plot overflow-x-auto">
                 <Table className="text-xs">
-                    <TableHeader>
+                    <TableHeader className="bg-rail">
                         <TableRow>
                             <TableHead className="text-xs font-semibold">协议</TableHead>
                             <TableHead className="text-xs font-semibold">本地端点</TableHead>
